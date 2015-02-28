@@ -1,0 +1,154 @@
+<script src="js/jquery.js"></script>
+<script>
+var kids=0;
+var adults=0;
+
+function validate(elem){
+  if(typeof elem === "undefined" || elem == null) return false;
+  if(isundef($(elem).attr("data-test"))) return true;
+  var test_type = $(elem).attr("data-test");
+  var test_value = elem.value || $(elem).prop("value") || $(elem).attr("value");
+  switch(test_type){
+    case 'age': 
+      if(isNaN(test_value)) return false;
+      if(parseInt(test_value)>200) { show_error("Invalid age"); return false; }
+      if(parseInt(test_value)<18) { show_error("You must be at least 18 years old"); return false; }
+      break;
+    case 'age_kids':
+      if(isNaN(test_value)) return false;
+      if(parseInt(test_value)>21) { show_error("Invalid age"); return false; }
+      break;
+    case 'age_csv':
+      var valid=true;
+      kids=0;
+      var age_array = test_value.split(/[^0-9]/);
+      for(i in age_array){
+        if(!isNaN(age_array[i]) && parseInt(age_array[i])>0) kids++;
+      }
+      if(!valid){ show_error("Invalid children age list"); return false;}
+      break;
+    case 'zip':
+      if(isNaN(test_value)) return false;
+      if(parseInt(test_value)>90000) { show_error("Invalid zipcode"); return false; }
+      if(parseInt(test_value)<500) { show_error("Invalid zipcode"); return false; }
+      break;
+  }
+  show_error("");
+  return true;
+}
+
+function show_error(text){
+  $("#error_text").html(text);
+}
+
+function isundef(elem){return typeof elem === "undefined";}
+function isdef(elem){return typeof elem !== "undefined";}
+
+function getNext(elem){
+  switch(elem.id){
+    case 'zip_i': return 'cover'; break;
+    case 'cover_i': return 'age'; break;
+    case 'age_i':
+      switch($("#cover_i").val()){
+        case 'myself': 
+          adults=1; 
+          $("#cover_spouse").css("display","none");
+          $("#cover_spouse_and").css("display","none");
+          $("#cover_kids").css("display","none");
+          return 'cover_myself';
+        case 'myself and my spouse': 
+          adults=2; 
+          $("#cover_spouse_and").css("display","none");
+          $("#cover_kids").css("display","none");
+          return 'cover_spouse';
+        case 'myself, my spouse, and my kids': 
+          adults=2; 
+          return 'cover_spouse_and';
+        case 'myself and my kids': 
+          adults=1; 
+          $("#cover_spouse").css("display","none");
+          $("#cover_spouse_and").css("display","none");
+          return 'cover_kids';
+      } break;
+    default: 
+      if($(elem).attr("data-after")=="button") $("#household_i").val(adults+kids);
+      return $(elem).attr("data-after");
+  }
+}
+
+$(document).ready(function(){
+  $("input").on("change",function(){
+    if(validate($(this)))
+      $("#"+getNext(this)).css("display","inline");
+  });
+  $("select").on("change",function(){
+    if(validate($(this)))
+      $("#"+getNext(this)).css("display","inline");
+  });
+  
+  $("#btn").on("click",function(){
+    ($("#cover_i").val());
+  });  
+});
+
+
+</script>
+<style>
+@import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300);
+body{
+  text-align: center;
+}
+.story *{
+  font-family: 'Open Sans Condensed', sans-serif;
+  font-size:1em;
+}
+div.story>p{
+  display:none;
+  font-size: 1.5em;
+  text-align: center;
+}
+div.story>p.active{
+  display: inline;
+}
+
+.story input{
+  border:none;
+  border-bottom:dotted 1px #000;
+}
+
+.story select{
+  border:none;
+  border-bottom:dotted 1px #000;
+  background-color: transparent;
+}
+
+#age_kids_i{
+  width:5em;
+}
+#age_kids_label{
+  position:relative;
+  width:5em;
+  left:-10em;
+  top:1.5em;
+  font-size:0.5em;
+}
+</style>
+<div class="story">
+<p id="zipcode" class="active">My zipcode is <input id="zipcode_i" type="number" size=5 min=00000 max=99999 placeholder="10012" data-after="cover" data-test="zip"></p>
+<p id="cover">and I'd like to cover <select id="cover_i" data-after="cover_myself"><option></option><option>myself</option><option>myself and my spouse</option><option>myself, my spouse, and my kids</option><option>myself and my kids</option></select>.<br></p>
+<p id="age">I am <input id="age_i" type="number" size=2 data-after="button" data-test="age"> years old</p>
+<p id="cover_spouse">, and my spouse is <input id="age_spouse_i" type="number" size=2 data-after="button" data-test="age"> years old</p>
+<p id="cover_spouse_and">
+  , and my spouse is 
+  <input id="age_spouse_i" type="number" size=2 data-after="cover_kids" data-test="age">
+   years old
+</p>
+<p id="cover_kids">,<br> and my kids are <input id="age_kids_i" type="text" data-after="button" data-test="age_csv">.<label id="age_kids_label">Please enter comma separated ages</label></p><br>
+<p id="button">
+  There are 
+  <input id="household_i" type="number" data-after="button" data-test="household">
+   people in my household.<br>
+  <button id="btn">Get Quote</button>
+</p>
+</div>
+<span id="error_text" style="font-weight:bold;color:red;"></span>
