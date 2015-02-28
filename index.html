@@ -114,6 +114,13 @@ div.story>p.active{
 .story input{
   border:none;
   border-bottom:dotted 1px #000;
+  text-align: center;
+}
+.story input[size="2"]{
+  width:3rem;
+}
+.story input[size="5"]{
+  width:4rem;
 }
 
 .story select{
@@ -131,6 +138,7 @@ div.story>p.active{
   left:-10em;
   top:1.5em;
   font-size:0.5em;
+  line-height: 3em;
 }
 </style>
 <div class="story">
@@ -146,7 +154,7 @@ div.story>p.active{
 <p id="cover_kids">,<br> and my kids are <input id="age_kids_i" type="text" data-after="button" data-test="age_csv">.<label id="age_kids_label">Please enter comma separated ages</label></p><br>
 <p id="button">
   There are 
-  <input id="household_i" type="number" data-after="button" data-test="household">
+  <input id="household_i" type="number" size=2 data-after="button" data-test="household">
    people in my household.<br>
   <button id="btn">Get Quote</button>
 </p>
