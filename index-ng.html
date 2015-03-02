@@ -1,0 +1,101 @@
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="HandheldFriendly" content="true" />
+  <link rel="stylesheet" type="text/css" href="css/segstory.css" />
+<script src="js/angular.js"></script>
+<script>
+var myApp = angular.module("segstory",[]);
+myApp.controller('Main',['$scope',function($scope){
+  $scope.range = function(min, max, prefix){
+    step = 1;
+    var input = [];
+    for (var i = min; i <= max; i += step) input.push(prefix+i);
+    return input;
+  };
+  $scope.household_count = function(adults,kids){
+    if(isNaN(adults))adults=0;
+    if(isNaN(kids))kids=0;
+    if(adults<=2) return adults;
+    adults=2;
+    return parseInt(0+kids+adults);
+  };
+  $scope.addNewChoice = function() {
+    var newItemNo = $scope.choices.length+1;
+    $scope.choices.push({'id':'choice'+newItemNo});
+  };
+
+}]);
+</script>
+</head>
+<body ng-app="segstory" ng-controller="Main">
+<div class="story">
+<form class="inline" name="qtfrm" onsubmit="return false;">
+<p>My zipcode is <input name="zip" ng-model="zip" type="number" size=5 ng-min="501" ng-max="99999" required></p>
+<p ng-show="qtfrm.zip.$valid">
+  and I'd like to cover 
+  <select name="coverage" ng-model="coverage" ng-minlength="6" required>
+    <option ng-show="qtfrm.coverage.$pristine"></option>
+    <option value="1">myself</option>
+    <option value="2">myself and my spouse</option>
+    <option value="3">myself, my spouse, and my kids</option>
+    <option value="4">myself and my kids</option>
+  </select>
+  .<br>
+</p>
+<!-- AGE -->
+<p ng-show="qtfrm.coverage.$dirty">
+  I am 
+  <input name="age" ng-model="age" type="number" ng-min="18" ng-max="200" size=2 required>
+   years old
+</p>
+<p class="warning" ng-show="qtfrm.age.$error.min">(You must be 18 years or older)</p>
+<p class="warning" ng-show="qtfrm.age.$error.max">(I find that hard to believe)</p>
+
+<!-- SPOUSE_AGE -->
+<p ng-show="(coverage==2 || coverage==3) && qtfrm.age.$valid">, and my spouse is <input name="spouse_age" ng-model="spouse_age" type="number" ng-min="18" ng-max="200" size=2 required> years old.</p>
+<br>
+
+<!-- KIDS_COUNT -->
+<p ng-show="(coverage==4 && qtfrm.age.$valid) || (coverage==3 && qtfrm.age.$valid && qtfrm.spouse_age.$valid)">
+I have <input name="kids_count" ng-model="kids_count" type="number" size=2 ng-min="1" ng-max="100" required> kids
+</p>
+</form>
+<!-- KIDS_AGE -->
+<form class="inline" name="kidfrm" ng-model="kidfrm" onsubmit="return false;">
+<p class="inline" ng-show="qtfrm.kids_count.$valid && ((coverage==4 && qtfrm.age.$valid) || (coverage==3 && qtfrm.age.$valid && qtfrm.spouse_age.$valid))">
+   who are
+  <div class="inline" ng-repeat="n in range(1,kids_count,'kid')" ng-show="qtfrm.kids_count.$valid && ((coverage==4 && qtfrm.age.$valid) || (coverage==3 && qtfrm.age.$valid && qtfrm.spouse_age.$valid))">
+    <p ng-if="$last">and </p>
+    <input name="kid{{n}}" ng-model="kidagen" type="number" ng-min="1" ng-max="18" size=2 required>
+    <p ng-if="!$last">, </p>
+    <p ng-if="$last">.</p>
+  </div>
+</p>
+</form>
+
+<br>
+
+<!-- HOUSEHOLD-SIZE -->
+<div ng-show="qtfrm.coverage.$dirty && qtfrm.age.$valid && 
+  (
+        coverage==1
+    || (coverage==2 && qtfrm.spouse_age.$valid)
+    || (coverage==3 && qtfrm.spouse_age.$valid && qtfrm.kids_count.$valid && kidfrm.$dirty && kidfrm.$valid)
+    || (coverage==4 && qtfrm.kids_count.$valid && kidfrm.$dirty && kidfrm.$valid)
+  ) ">
+  <p ng-if="coverage==1">There is</p>
+  <p ng-if="coverage!=1">There are</p>
+  <p class="num_input" contentEditable="true" name="household_size" ng-model="household_size">{{ household_count(coverage,kids_count) }}</p>
+  <p ng-if="coverage==1">person in my household.</p>
+  <p ng-if="coverage!=1">people in my household.</p>
+   <br>
+  <button id="btn">Get Quote</button>
+</div>
+</div>
+<span id="error_text" style="font-weight:bold;color:red;"></span>
+
+</body>
+</html>

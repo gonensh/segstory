@@ -1,0 +1,59 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300);
+
+body{
+  text-align: center;
+  font-family: 'Open Sans Condensed', sans-serif;
+  font-size:1.5em;
+  width:100vw;
+}
+div.story{
+  width:100%;
+}
+.story p{
+  display: inline;
+}
+.story input, .story select{
+  border:none;
+  border-bottom:dotted 1px #000;
+  font-family: 'Open Sans Condensed', sans-serif;
+  font-size: 1em;
+  text-align: center;
+}
+.story input[size="2"]{
+  width:3rem;
+}
+.story input[size="5"]{
+  width:4rem;
+}
+.story select{
+  border:none;
+  border-bottom:dotted 1px #000;
+  background-color: transparent;
+}
+div.num_input{
+  width:3em;
+  border-bottom:dotted 1px #000;
+  text-align: center;
+  margin:auto;
+}
+.inline{
+  display: inline;
+}
+.warning{
+  color:red;
+  background-color:rgba(255,0,0,0.075);
+  border-radius: 0.5em;
+  font-weight: bold;
+  font-size: 0.75em;
+}
+#age_kids_i{
+  width:5em;
+}
+#age_kids_label{
+  position:relative;
+  width:5em;
+  left:-10em;
+  top:1.5em;
+  font-size:0.5em;
+  line-height: 3em;
+}
