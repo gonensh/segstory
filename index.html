@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
@@ -7,8 +8,8 @@
   <link rel="stylesheet" type="text/css" href="css/segstory.css" />
 <script src="js/angular.js"></script>
 <script>
-var myApp = angular.module("segstory",[]);
-myApp.controller('Main',['$scope',function($scope){
+var myApp = angular.module("segstory",[])
+.controller('Main',function($scope){
   $scope.range = function(min, max, prefix){
     step = 1;
     var input = [];
@@ -20,14 +21,33 @@ myApp.controller('Main',['$scope',function($scope){
     if(isNaN(kids))kids=0;
     if(adults<=2) return adults;
     adults=2;
-    return parseInt(0+kids+adults);
+    return parseInt(kids)+parseInt(adults);
   };
   $scope.addNewChoice = function() {
     var newItemNo = $scope.choices.length+1;
     $scope.choices.push({'id':'choice'+newItemNo});
   };
+  // Inject url parameters into $scope
+  var params=urlParams();
+  for(key in params){
+    if(typeof $scope[key] == "string")
+      $scope[key]=params[key];
+    else
+      $scope[key]=Number(params[key]);
+  }
+});
 
-}]);
+function urlParams(){
+  params={};
+  var uparams=location.toString().split('&');
+  uparams[0]=uparams[0].split('?')[1];
+  for(param in uparams){
+    var key = uparams[param].split("=")[0];
+    var value = uparams[param].split("=")[1];
+    params[key]=value;
+  }
+  return params;
+}
 </script>
 </head>
 <body ng-app="segstory" ng-controller="Main">
