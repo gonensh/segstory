@@ -9,11 +9,12 @@
 body{
   text-align: center;
   font-family: 'Open Sans Condensed', sans-serif;
-  font-size:1.5em;
   width:99vw;
 }
 div.story{
   width:100%;
+  padding-top:20vh;
+  font-size:3rem;
 }
 .story p{
   display: inline;
@@ -26,10 +27,10 @@ div.story{
   text-align: center;
 }
 .story input[size="2"]{
-  width:3rem;
+  width:3em;
 }
 .story input[size="5"]{
-  width:4rem;
+  width:4em;
 }
 .story select{
   border:none;
@@ -62,4 +63,14 @@ div.story{
   top:1.5em;
   font-size:0.5em;
   line-height: 3em;
+}
+/* Bootstrap overrides */
+.navbar{
+  width:100vw;
+  padding-right:1vw;
+  padding-left:1vw;
+}
+
+button.navbar-right{
+  float:right;
 }
